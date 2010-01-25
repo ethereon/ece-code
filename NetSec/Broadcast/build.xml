@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Copyright (C) 2010 Saumitro Dasgupta.
+
+Distributed under the MIT License.
+<http://www.opensource.org/licenses/mit-license.html>
+
+-->
+<project name="Broadcast" default="default" basedir=".">
+	<description>Builds, tests, and runs the project Broadcast.</description>
+	<import file="nbproject/build-impl.xml"/>
+
+	<target name="-post-jar">
+		
+		<copy
+			tofile = "${dist.dir}/BroadcastServer"
+			file = "./BroadcastServer" />
+		
+		<copy
+			tofile = "${dist.dir}/BroadcastClient"
+			file = "./BroadcastClient" />
+
+		<copy
+			overwrite="true"
+			tofile = "${dist.dir}/README.txt"
+			file = "./README.txt" />
+		
+		<chmod perm ="+x" file="${dist.dir}/BroadcastServer" />
+		<chmod perm ="+x" file="${dist.dir}/BroadcastClient" />
+		
+			
+		
+	</target>
+
+	</project>

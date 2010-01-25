@@ -1,0 +1,1 @@
+java -classpath `find . | grep Broadcast.jar` broadcast.client.BroadcastClient $*
