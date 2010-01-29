@@ -22,15 +22,28 @@ import broadcast.protocol.*;
  */
 public class Transmitter extends Thread {
 
-    public static final String QUIT_KEY = "q";
-    public static String userPrompt = ">> ";
-    private DatagramSocket socket;
+    /* Client commands */
+    private static final String CMD_MESSAGE = "MESSAGE";
+    private static final String CMD_QUIT = "q";
+    private static final String DELIMITER = " ";
 
+    private static String userPrompt = ">> ";
+    private DatagramSocket socket;
+    
     public Transmitter(DatagramSocket socket) {
 
         this.socket = socket;
 
     }
+
+    /**
+     * Displays the command line entry prompt for user input
+     */
+    public static void displayUserPrompt() {
+
+        System.out.print(Transmitter.userPrompt);
+    }
+    
 
     /**
      * Send the command to the broadcast server.
@@ -39,6 +52,8 @@ public class Transmitter extends Thread {
      */
     private void transmitCommand(String cmd) {
 
+        if(cmd==null) return;
+        
         byte[] cmdBytes = cmd.getBytes();
 
         try {
@@ -58,21 +73,51 @@ public class Transmitter extends Thread {
 
     }
 
-    private void handleInput(String in) {
+    /**
+     * Subscribe to the broacast server
+     */
+    private void subscribe() {
 
-        String cmdType = BroadcastProtocol.getCommandType(in);
-
-        if (cmdType == null) {
-            System.err.println("Invalid command string.");
-        } else if (cmdType.equals(BroadcastProtocol.SUBSCRIBE)
-                || cmdType.equals(BroadcastProtocol.CLIENT_MESSAGE)) {
-            transmitCommand(in);
-        }
+        transmitCommand(BroadcastProtocol.getSubscriptionCommand());
 
     }
 
+    /**
+     * Parse the command string and send the message to the broadcast server
+     *
+     * @param cmd A valid command string
+     */
+    private void sendMessageForBroadcast(String cmd) {
+
+        if(cmd.length()<CMD_MESSAGE.length()+DELIMITER.length()+1) {
+
+            System.err.println("No message specified.");
+            return;
+        }
+
+        String msg = cmd.substring(CMD_MESSAGE.length()+DELIMITER.length());
+        transmitCommand(BroadcastProtocol.generateBroadcastRequest(msg));
+
+    }
+
+    /**
+     * Handle user input
+     * @param in string entered by the user
+     */
+    private void handleInput(String in) {
+
+        if(in.startsWith(CMD_MESSAGE+DELIMITER))
+            sendMessageForBroadcast(in);
+        else
+            System.err.println("Invalid command string.");
+
+    }
+
+
     @Override
     public void run() {
+
+        subscribe();
 
         try {
 
@@ -82,10 +127,10 @@ public class Transmitter extends Thread {
 
             while (true) {
 
-                System.out.print(userPrompt);
+                displayUserPrompt();
                 String lineIn = in.readLine();
 
-                if (lineIn == null || lineIn.equals(QUIT_KEY)) break;
+                if (lineIn == null || lineIn.equals(CMD_QUIT)) break;
                 
                 handleInput(lineIn);
 

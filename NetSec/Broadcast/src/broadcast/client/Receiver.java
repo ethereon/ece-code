@@ -62,7 +62,7 @@ public class Receiver extends Thread {
         System.out.println("\n");
 
         //Redisplay the user input prompt.
-        System.out.print(Transmitter.userPrompt);
+        Transmitter.displayUserPrompt();
 
     }
 
@@ -86,7 +86,7 @@ public class Receiver extends Thread {
 
                 String s = new String(packet.getData(), 0, packet.getLength());
 
-                if (s.startsWith(BroadcastProtocol.CAST_MESSAGE)) {
+                if (s.startsWith(BroadcastProtocol.BROADCAST_MESSAGE)) {
                     displayBroadcastMessage(s);
                 }
 

@@ -41,6 +41,7 @@ public class BroadcastServer extends AbstractUDPServer {
      */
     private void addSubscriber(InetSocketAddress sa) {
 
+        System.out.println("[Subscription Request] " + sa.toString());
         subscribers.add(sa);
 
     }
@@ -112,7 +113,7 @@ public class BroadcastServer extends AbstractUDPServer {
 
         if (cmdType.equals(BroadcastProtocol.SUBSCRIBE)) {
             addSubscriber(sa);
-        } else if (cmdType.equals(BroadcastProtocol.CLIENT_MESSAGE)) {
+        } else if (cmdType.equals(BroadcastProtocol.BROADCAST_REQUEST)) {
             broadcastMessage(sa, cmd);
         }
 

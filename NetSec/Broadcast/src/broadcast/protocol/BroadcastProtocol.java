@@ -18,15 +18,16 @@ package broadcast.protocol;
 public class BroadcastProtocol {
 
     /* Command Type Identifiers */
-    public static final String SUBSCRIBE = "GREETING";
-    public static final String CLIENT_MESSAGE = "MESSAGE";
-    public static final String CAST_MESSAGE = "INCOMING";
+    public static final String SUBSCRIBE = "SUBSCRIBE";
+    public static final String BROADCAST_MESSAGE = "INCOMING";
+    public static final String BROADCAST_REQUEST = "BROADCAST";
+    
     /* Command String Delimiter */
     public static final String DELIMITER = " ";
     public static final String[] commands = {
         SUBSCRIBE,
-        CLIENT_MESSAGE,
-        CAST_MESSAGE
+        BROADCAST_MESSAGE,
+        BROADCAST_REQUEST
     };
 
     /**
@@ -38,12 +39,13 @@ public class BroadcastProtocol {
      */
     public static boolean isCommandOfType(String cmd, String type) {
 
-        if (type.equals(SUBSCRIBE)) {
+        if (type.equals(SUBSCRIBE))
             return cmd.equals(SUBSCRIBE);
-        } else {
+
+        else 
             return cmd.startsWith(type + DELIMITER)
                     && cmd.length() > (type.length() + DELIMITER.length());
-        }
+        
 
     }
 
@@ -88,7 +90,7 @@ public class BroadcastProtocol {
 
         int delimLen = BroadcastProtocol.DELIMITER.length();
 
-        int iS = BroadcastProtocol.CAST_MESSAGE.length() + delimLen;
+        int iS = BroadcastProtocol.BROADCAST_MESSAGE.length() + delimLen;
         int iE = cmd.length()
                 - (senderIp.length() + senderPort.length() + 2 * delimLen);
 
@@ -105,9 +107,10 @@ public class BroadcastProtocol {
      * @param cmd A valid message command string
      * @return The body of the message if cmd is valid, else NULL
      */
+
     public static String parseClientMessage(String cmd) {
 
-        int cmdLen = CLIENT_MESSAGE.length();
+	int cmdLen = BROADCAST_REQUEST.length();
 
         //Verify that a message string exists
         if (cmd.length() < (cmdLen + 2)) {
@@ -118,6 +121,7 @@ public class BroadcastProtocol {
 
     }
 
+
     /**
      * Creates a broadcast command string for a given message
      *
@@ -126,7 +130,7 @@ public class BroadcastProtocol {
      */
     public static String generateBroadcastMessageCommand(Message msg) {
 
-        String cmd = CAST_MESSAGE + DELIMITER;
+        String cmd = BROADCAST_MESSAGE + DELIMITER;
 
         cmd += msg.body;
         cmd += DELIMITER + msg.srcAddress.getAddress().getHostAddress();
@@ -134,4 +138,23 @@ public class BroadcastProtocol {
 
         return cmd;
     }
+
+
+    /**
+     * Creates a broadcast request command string
+     * 
+     * @param msg The message to be broadcast
+     * @return A broadcast request string that can be sent to the server
+     */
+    public static String generateBroadcastRequest(String msg) {
+
+        return BROADCAST_REQUEST + DELIMITER + msg;
+    }
+
+    public static String getSubscriptionCommand() {
+
+        return SUBSCRIBE;
+
+    }
+
 }
