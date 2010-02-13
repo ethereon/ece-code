@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+Copyright (C) 2010 Saumitro Dasgupta.
+
+Distributed under the MIT License.
+<http://www.opensource.org/licenses/mit-license.html>
+
+-->
+<project name="Cryptonite" default="default" basedir=".">
+	<description>Builds, tests, and runs the project Cryptonite.</description>
+	<import file="nbproject/build-impl.xml"/>
+
+	<target name="-post-jar">
+		
+		<copy
+			tofile = "${dist.dir}/cryptonite"
+			file = "./cryptonite" />
+		
+		<copy
+			overwrite="true"
+			tofile = "${dist.dir}/README.txt"
+			file = "./README.txt" />
+		
+		<chmod perm ="+x" file="${dist.dir}/cryptonite" />
+		
+	</target>
+
+	</project>
